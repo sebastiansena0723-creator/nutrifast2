@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="destacados">
+  <h2>Menú NutriFast</h2>
+  <div class="cards">
+    <div class="card">
+      <img src="{{ url_for('static', filename='images/hamburguesa1.jpeg') }}" alt="Hamburguesa proteica">
+      <h3>Hamburguesa Proteica</h3>
+      <p>$25.000 COP</p>
+      <button class="btn">Agregar al carrito</button>
+    </div>
+    <div class="card">
+      <img src="{{ url_for('static', filename='images/arepa.jpeg') }}" alt="Arepa saludable">
+      <h3>Arepa Saludable</h3>
+      <p>$18.000 COP</p>
+      <button class="btn">Agregar al carrito</button>
+    </div>
+    <div class="card">
+      <img src="{{ url_for('static', filename='images/bowl.jpg') }}" alt="Bowl energético">
+      <h3>Bowl Energético</h3>
+      <p>$22.000 COP</p>
+      <button class="btn">Agregar al carrito</button>
+    </div>
+  </div>
+</section>
+{% endblock %}
