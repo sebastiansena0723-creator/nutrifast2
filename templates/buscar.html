@@ -3,28 +3,20 @@
 {% block content %}
 <section class="menu-section">
     <div class="container">
-        <h2 class="section-title">Nuestro Menú Saludable</h2>
+        <h2 class="section-title">Resultados de Búsqueda</h2>
         
-        <div class="menu-filters">
-            <a href="{{ url_for('menu', categoria='todos') }}" 
-               class="filter-btn {% if categoria_actual == 'todos' %}active{% endif %}">Todos</a>
-            <a href="{{ url_for('menu', categoria='desayuno') }}" 
-               class="filter-btn {% if categoria_actual == 'desayuno' %}active{% endif %}">Desayunos</a>
-            <a href="{{ url_for('menu', categoria='almuerzo') }}" 
-               class="filter-btn {% if categoria_actual == 'almuerzo' %}active{% endif %}">Almuerzos</a>
-            <a href="{{ url_for('menu', categoria='cena') }}" 
-               class="filter-btn {% if categoria_actual == 'cena' %}active{% endif %}">Cenas</a>
-            <a href="{{ url_for('menu', categoria='bebida') }}" 
-               class="filter-btn {% if categoria_actual == 'bebida' %}active{% endif %}">Bebidas</a>
-        </div>
+        {% if query %}
+        <p class="search-query">Buscando: "{{ query }}"</p>
+        {% endif %}
         
+        {% if resultados %}
         <div class="menu-grid">
-            {% for producto in productos %}
+            {% for producto in resultados %}
             <div class="product-card">
                 <div class="card-image">
                     <img src="{{ url_for('static', filename='img/' + producto.imagen) }}" 
                          alt="{{ producto.nombre }}"
-                        
+                            
                 </div>
                 
                 <div class="card-content">
@@ -32,6 +24,7 @@
                     <p class="product-description">{{ producto.descripcion }}</p>
                     <div class="product-price">${{ "{:,}".format(producto.precio) }}</div>
                     
+                    <!-- BOTÓN AGREGAR AL CARRITO - ESTO ES LO QUE FALTABA -->
                     <form action="{{ url_for('agregar') }}" method="POST" class="add-to-cart-form">
                         <input type="hidden" name="id" value="{{ producto.id }}">
                         <button type="submit" class="add-to-cart-btn">
@@ -42,10 +35,10 @@
             </div>
             {% endfor %}
         </div>
-        
-        {% if not productos %}
+        {% else %}
         <div class="no-products">
-            <p>No hay productos en esta categoría.</p>
+            <p>No se encontraron productos para "{{ query }}"</p>
+            <a href="{{ url_for('menu') }}" class="btn btn-primary">Ver Todo el Menú</a>
         </div>
         {% endif %}
     </div>

@@ -1,11 +1,12 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% block content %}
-<section class="form-section">
-  <h2>Iniciar Sesión</h2>
-  <form>
-    <input type="email" placeholder="Correo electrónico" required>
+<div class="form-container">
+  <h2>Iniciar sesión</h2>
+  <form method="post">
+    <input type="text" placeholder="Usuario" required>
     <input type="password" placeholder="Contraseña" required>
-    <button class="btn" type="submit">Ingresar</button>
+    <button type="submit">Entrar</button>
   </form>
-</section>
+  <p>¿No tienes cuenta? <a href="{{ url_for('registro') }}">Regístrate</a></p>
+</div>
 {% endblock %}

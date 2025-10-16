@@ -1,28 +1,12 @@
-{% extends "base.html" %}
-{% block content %}
-<section class="contacto">
-  <h2>Contáctanos</h2>
-  <form class="contact-form">
-    <input type="text" placeholder="Tu nombre" required>
-    <input type="email" placeholder="Tu correo" required>
-    <textarea placeholder="Tu mensaje"></textarea>
-    <button class="btn" type="submit">Enviar</button>
-  </form>
+{% extends 'base.html' %}
 
-  <div class="portafolios">
-    <h3>Nuestros Proyectos</h3>
-    <div class="cards">
-      <div class="card">
-        <img src="{{ url_for('static', filename='images/proyecto1.jpg') }}" alt="Proyecto 1">
-        <h4>Campaña de Vida Saludable</h4>
-        <p>Colaboración con gimnasios locales para promover alimentación balanceada.</p>
-      </div>
-      <div class="card">
-        <img src="{{ url_for('static', filename='images/proyecto2.jpg') }}" alt="Proyecto 2">
-        <h4>Programa Escolar NutriKids</h4>
-        <p>Educamos a niños sobre nutrición y hábitos alimenticios saludables.</p>
-      </div>
+{% block content %}
+<section class="menu-section">
+    <div class="container">
+        <h2 class="section-title">Contáctanos</h2>
+        <div class="no-products">
+            <p>Formulario de contacto en desarrollo.</p>
+        </div>
     </div>
-  </div>
 </section>
 {% endblock %}
