@@ -22,22 +22,26 @@
             {% for producto in productos %}
             <div class="product-card">
                 <div class="card-image">
-                    <img src="{{ url_for('static', filename='img/' + producto.imagen) }}" 
+                    <img src="{{ url_for('static', filename='img/' + producto.imagen) }}"
                          alt="{{ producto.nombre }}"
-                        
+                         onerror="handleImageError(this)">
                 </div>
                 
                 <div class="card-content">
                     <h3 class="product-name">{{ producto.nombre }}</h3>
                     <p class="product-description">{{ producto.descripcion }}</p>
-                    <div class="product-price">${{ "{:,}".format(producto.precio) }}</div>
                     
-                    <form action="{{ url_for('agregar') }}" method="POST" class="add-to-cart-form">
-                        <input type="hidden" name="id" value="{{ producto.id }}">
-                        <button type="submit" class="add-to-cart-btn">
-                            🛒 Agregar al Carrito
-                        </button>
-                    </form>
+                    <!-- PRECIO Y BOTÓN EN LA MISMA LÍNEA -->
+                    <div class="product-footer">
+                        <div class="product-price">${{ "{:,}".format(producto.precio) }}</div>
+                        
+                        <form action="{{ url_for('agregar') }}" method="POST" class="add-to-cart-form">
+                            <input type="hidden" name="id" value="{{ producto.id }}">
+                            <button type="submit" class="add-to-cart-btn">
+                                🛒 Agregar
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
             {% endfor %}

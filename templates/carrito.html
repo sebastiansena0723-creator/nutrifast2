@@ -1,71 +1,76 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
 <section class="cart-section">
     <div class="container">
         <h2 class="section-title">Tu Carrito de Compras</h2>
-
-        {# Check if the cart has items #}
+        
         {% if carrito %}
         <div class="cart-items">
-            {# Iterate over each item in the cart #}
             {% for item in carrito %}
             <div class="cart-item">
                 
-                {# Item Image: Added closing slash (/) to the <img> tag for HTML5 compliance #}
                 <div class="cart-item-image">
                     <img src="{{ url_for('static', filename='img/' + item.imagen) }}"
                          alt="{{ item.nombre }}"
-                         
+                         onerror="handleImageError(this)">
                 </div>
                 
-                {# Item Details #}
                 <div class="item-details">
                     <h3 class="item-name">{{ item.nombre }}</h3>
                     <p class="item-descripcion">{{ item.descripcion }}</p>
                 </div>
-
-                {# Item Controls (Quantity update) #}
+                
                 <div class="item-controls">
-                    
-                    {# 💡 CRITICAL FIX: Added the missing closing </form> tag #}
                     <form action="{{ url_for('actualizar_carrito') }}" method="POST" class="quantity-form">
                         <input type="hidden" name="id" value="{{ item.id }}">
-                        
-                        {# Decrement button #}
                         <button type="submit" name="accion" value="decrementar" class="qty-btn">-</button>
-                        
-                        {# Quantity display #}
                         <span class="quantity">{{ item.cantidad }}</span>
-                        
-                        {# Increment button #}
                         <button type="submit" name="accion" value="incrementar" class="qty-btn">+</button>
                     </form>
-                    {# ⬆️ FIX APPLIED: The form is now properly closed #}
                 </div>
                 
-                {# Item Price and Remove Button #}
                 <div class="item-price-and-actions">
                     <div class="item-price">
-                        ${{ '%.2f'|format(item.precio * item.cantidad) }}
+                        ${{ "{:,}".format(item.precio * item.cantidad) }}
                     </div>
                     
-                    {# Remove Form #}
                     <form action="{{ url_for('actualizar_carrito') }}" method="POST" class="remove-form">
                         <input type="hidden" name="id" value="{{ item.id }}">
-                        {# Added 'Quitar' text to the button for the user #}
-                        <button type="submit" name="accion" value="eliminar" class="remove-btn">Quitar</button>
+                        <button type="submit" name="accion" value="eliminar" class="remove-btn">🗑️ Quitar</button>
                     </form>
                 </div>
                 
             </div>
             {% endfor %}
         </div>
+        
+        <div class="cart-summary">
+            <div class="summary-row">
+                <span class="summary-label">Subtotal:</span>
+                <span class="summary-value">${{ "{:,}".format(total) }}</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">Envío:</span>
+                <span class="summary-value">$3,000</span>
+            </div>
+            <div class="summary-row total-row">
+                <span class="summary-label">Total:</span>
+                <span class="summary-value">${{ "{:,}".format(total + 3000) }}</span>
+            </div>
+            
+            <div class="cart-actions">
+                <a href="{{ url_for('vaciar_carrito') }}" class="btn btn-secondary">Vaciar Carrito</a>
+                <button onclick="procesarPago()" class="btn btn-primary">Procesar Pedido</button>
+            </div>
+        </div>
+        
         {% else %}
-        {# Case for an empty cart #}
-        <p class="empty-cart-message">Tu carrito de compras está vacío.</p>
+        <div class="empty-cart">
+            <p class="empty-cart-message">🛒 Tu carrito está vacío</p>
+            <a href="{{ url_for('menu') }}" class="btn btn-primary">Ver Menú</a>
+        </div>
         {% endif %}
-
     </div>
 </section>
-{% endblock content %}
+{% endblock %}

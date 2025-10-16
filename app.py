@@ -6,55 +6,55 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)
 app.config['PERMANENT_SESSION_LIFETIME'] = 3600
 
-# Base de datos de productos ACTUALIZADA con tus imágenes
+# Base de datos de productos con precios actualizados
 productos = [
     {
         "id": 1, 
         "nombre": "Arepa con jugo", 
-        "precio": 12000, 
-        "imagen": "arepa con jugo.jpg",  # ← Nombre exacto de tu imagen
+        "precio": 8000, 
+        "imagen": "arepa con jugo.jpg",
         "categoria": "desayuno", 
-        "descripcion": "Arepa integral con jugo natural"
+        "descripcion": "Arepa integral con jugo natural de naranja"
     },
     {
         "id": 2, 
         "nombre": "Bowl saludable", 
         "precio": 15000, 
-        "imagen": "bowl.jpg",  # ← Nombre exacto de tu imagen
+        "imagen": "bowl.jpg",
         "categoria": "almuerzo", 
-        "descripcion": "Bowl con quinoa y vegetales frescos"
+        "descripcion": "Bowl con quinoa, pollo y vegetales frescos"
     },
     {
         "id": 3, 
         "nombre": "Hamburguesa fit", 
         "precio": 18000, 
-        "imagen": "hamburguesa 1.jpeg",  # ← Nombre exacto de tu imagen
+        "imagen": "hamburguesa 1.jpeg",
         "categoria": "cena", 
         "descripcion": "Hamburguesa de lentejas con pan integral"
     },
     {
         "id": 4, 
         "nombre": "Smoothie verde", 
-        "precio": 8000, 
-        "imagen": "smoothie.jpeg",  # ← Nombre exacto de tu imagen
+        "precio": 7000, 
+        "imagen": "smoothie.jpeg",
         "categoria": "bebida", 
-        "descripcion": "Smoothie de espinaca y piña"
+        "descripcion": "Smoothie energético de espinaca y piña"
     },
     {
         "id": 5, 
         "nombre": "Hamburguesa clásica", 
-        "precio": 16000, 
-        "imagen": "hamburguesa 2.jpeg",  # ← Nombre exacto de tu imagen
+        "precio": 20000, 
+        "imagen": "hamburguesa 2.jpeg",
         "categoria": "cena", 
-        "descripcion": "Hamburguesa clásica con ingredientes premium"
+        "descripcion": "Hamburguesa artesanal con carne premium"
     },
     {
         "id": 6, 
         "nombre": "Arepa especial", 
-        "precio": 10000, 
-        "imagen": "arepa.jpeg",  # ← Nombre exacto de tu imagen
+        "precio": 12000, 
+        "imagen": "arepa.jpeg",
         "categoria": "desayuno", 
-        "descripcion": "Arepa rellena con queso y aguacate"
+        "descripcion": "Arepa rellena con queso, aguacate y huevo"
     }
 ]
 
@@ -83,11 +83,11 @@ def menu():
 
 @app.route('/promociones')
 def promociones():
-    promos = [
-        {"id": 1, "nombre": "Combo Desayuno", "precio_original": 20000, "precio_promo": 15000, "productos": [1, 4]},
-        {"id": 2, "nombre": "Combo Almuerzo", "precio_original": 29000, "precio_promo": 22000, "productos": [2, 5]}
-    ]
-    return render_template('promociones.html', promociones=promos)
+    return render_template('promociones.html')
+
+@app.route('/portafolio')
+def portafolio():
+    return render_template('portafolio.html')
 
 @app.route('/contacto', methods=['GET', 'POST'])
 def contacto():
@@ -100,6 +100,12 @@ def contacto():
         return redirect(url_for('contacto'))
     
     return render_template('contacto.html')
+
+@app.route('/carrito')
+def carrito():
+    carrito = session.get('carrito', [])
+    total = sum(item['precio'] * item['cantidad'] for item in carrito)
+    return render_template('carrito.html', carrito=carrito, total=total)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -142,12 +148,6 @@ def logout():
     flash('Sesión cerrada correctamente', 'info')
     return redirect(url_for('index'))
 
-@app.route('/carrito')
-def carrito():
-    carrito = session.get('carrito', [])
-    total = sum(item['precio'] * item['cantidad'] for item in carrito)
-    return render_template('carrito.html', carrito=carrito, total=total)
-
 @app.route('/agregar', methods=['POST'])
 def agregar():
     if 'usuario' not in session:
@@ -170,6 +170,7 @@ def agregar():
             carrito.append(producto_con_cantidad)
         
         session['carrito'] = carrito
+        session.modified = True
         flash(f'¡{producto["nombre"]} agregado al carrito!', 'success')
     
     return redirect(request.referrer or url_for('menu'))
@@ -191,11 +192,13 @@ def actualizar_carrito():
             break
     
     session['carrito'] = carrito
+    session.modified = True
     return redirect(url_for('carrito'))
 
 @app.route('/vaciar_carrito')
 def vaciar_carrito():
     session['carrito'] = []
+    session.modified = True
     flash('Carrito vaciado correctamente', 'info')
     return redirect(url_for('carrito'))
 
@@ -203,7 +206,8 @@ def vaciar_carrito():
 def buscar():
     query = request.args.get('q', '').lower()
     if query:
-        resultados = [p for p in productos if query in p['nombre'].lower() or query in p['descripcion'].lower()]
+        resultados = [p for p in productos 
+                     if query in p['nombre'].lower() or query in p['descripcion'].lower()]
     else:
         resultados = []
     
